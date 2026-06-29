@@ -5,9 +5,9 @@
 	var s = new URLSearchParams(window.location.search).get('s');
 
 	if(s){
-		window.location.href = LATEST_PROJ
+		window.location.href = LATEST_PROJ + "?s=" + s ; 
 	} else {
-		window.location.href = LATEST_PROJ + "?s=" + s ;
+		window.location.href = LATEST_PROJ
 	}
 	
 	
