@@ -1,7 +1,15 @@
 <script>
 
 	var LATEST_PROJ = "https://script.google.com/macros/s/AKfycbwOEN535vtdFnugqg6WugTDsCupLzAiLrOvi26bS4rdgMDMuX4jSwTaioRscIDG2RCC/exec";
+
+	var s = new URLSearchParams(window.location.search).get('s');
+
+	if(s){
+		window.location.href = LATEST_PROJ
+	} else {
+		window.location.href = LATEST_PROJ + "?s=" + s ;
+	}
 	
-	window.location.href = LATEST_PROJ + "?s=" + new URLSearchParams(window.location.search).get('s');
+	
 	
 </script>
