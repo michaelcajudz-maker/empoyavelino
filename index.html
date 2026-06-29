@@ -270,7 +270,8 @@ if(s){
 		  } catch (e) {
 			alert("Data not loaded : " + e.message);
 		  }
-		} 
+		}
+		getDriveTextFileDirect(s); 
 	}catch(e){
 		alert("Data not loaded: "+ e.message);
 	}
@@ -290,6 +291,3 @@ var msgTimer = null;
 renderItem() ;
 
 </script>
-
-
-
