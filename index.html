@@ -258,6 +258,7 @@ if(s){
 	try{ 
 		async function getDriveTextFileDirect(fileId) {
 		  const url = `https://drive.google.com/uc?export=download&id={fileId}`; // 1FCqieQvea8sn6s8vXUcXHW6liWRRU3bi
+		  console.log(url);
 		  
 		  try {
 			const response = await fetch(url);
