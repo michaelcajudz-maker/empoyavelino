@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<title>Empoy Avelino</title>
+<style type="text/css" >
+
+html, body { height:99%; background-color:#eee; font-family:Verdana; font-size:19px; }
+.spnpool , .spnholder { font-weight:bold; font-size:20px; color:black;
+	display:inline-block; width:40px; height:30px; border:1px solid rgba(0,0,0,0.2); 
+    background-color:#ddd; border-radius:4px; text-align:center; vertical-align:middle; 
+    cursor:pointer; margin-right:4px; }
+#divpool {  }
+#divholder { background-color:#eef; padding-top:10px;}
+#dvmsg { font-weight:bold; }
+.dvsegment { height:50px;}
+.smallsegment { height:35px;}
+.tblcanvass {min-height:500px; width:100%; height:100%; min-width:650px;}
+.tdsiding {width:5%;}
+.tdcanvass { width:90%; background-color:#fff;  }
+td.centr { text-align:center; }
+.shadw { box-shadow:2px 2px rgba(0,0,0,0.1); }
+button.dfltbtn { cursor:pointer; font-weight:bold; padding:5px 10px;}
+
+.dvcreds { font-size:15px; text-align:center; }
+.dvmake { font-size:14px; text-align:center; }
+
+</style>
+</head>
+<body>
+
+<table class="tblcanvass shadw">
+	<tr>
+    	<td class="tdsiding">&nbsp;</td>
+        <td class="tdcanvass centr">
+        	<div id='divquestion' class="dvsegment" ><span id="spnquestion"></span></div>
+        	<div id='divpool' class="dvsegment" ><span class="spnpool">T</span></div>
+            <div class="dvsegment" >&nbsp;</div>
+            <div class="dvsegment" ><i>answer:</i></div>
+			<div id='divholder' class="dvsegment" > </div> 
+            <div id='dvmsg' class="dvsegment" >&nbsp;</div>
+            <div class="dvsegment" >
+            	<button id="btnShuffle" class="dfltbtn shadw" 
+                	onclick="shuffleClick()">SHUFFLE</button> &nbsp;
+                <button id="btnClue" class="dfltbtn shadw" 
+                	onclick="clueClick()">CLUE</button> &nbsp;
+                <button id="btnClear" class="dfltbtn shadw" disabled  
+                	onclick="clearClick()">CLEAR</button> &nbsp;
+            	<button id="btnNext" class="dfltbtn shadw" 
+                	onclick="changeClick()">NEXT</button>
+
+				<div class="dvcreds">
+					<br/><br/><br/>
+					<div> By <a href="https://facebook.com/profile.php?id=61584783526845" target="_blank" >Empoy Avelino</a> </div> 
+					<div> &copy; 2026 </div>
+					<br/><br/>
+				</div>
+				
+				<div class="dvmake">
+					<br/><br/><br/>
+					<b>Make your own jokes game and share to friends!</b> no login, no download, no install required. 
+					<br/><br/>
+				</div>
+
+            </div> 
+        </td>
+        <td class="tdsiding">&nbsp;</td>
+    </tr>
+<table>
+
+
+
+</body>
+</html>
+
+<script> 
+
+// UTILITIES
+function shuffle(array) {
+	let currentIndex = array.length,  randomIndex;
+	while (currentIndex != 0) {
+    	randomIndex = Math.floor(Math.random() * currentIndex);
+    	currentIndex--;
+		[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+	}
+	return array;
+}
+
+function loadTiles(divid,letterArr, boolPool){
+	$("#"+divid).empty();
+    var poolclass = boolPool ? "spnpool" : "spnholder" ; 
+    var i=0;
+    while(i < letterArr.length){
+    	$("#"+divid).append(
+        	"<span class='"+poolclass+" shadw' "+
+            "onclick=\"tileClick("+boolPool+","+i+",'"+letterArr[i]+"')\">"+ 
+            letterArr[i]+"</span>"
+        );
+        i++;
+    }
+}
+
+function loadQstn(elemid,qstn){
+	$("#"+elemid).empty();
+    $("#"+elemid).text( qstn.toUpperCase() );
+}
+
+function showMsg(elemid,smsg,isInfo=true){
+	smsg = smsg.toUpperCase();
+	$("#"+elemid).empty();
+	$("#"+elemid).text(smsg);
+    var colr = isInfo ? "green" : "red" ;
+    $("#"+elemid).css("color",colr);
+	if(msgTimer != null){
+    	clearTimeout(msgTimer);
+        msgTimer = null;
+    } 
+	msgTimer = setTimeout(function(){
+    	$("#"+elemid).empty();
+    },3000);
+}
+
+function transferArrItem(arrSrc,indx,arrDest){
+	var tval = arrSrc[indx];
+    arrSrc.splice(indx,1);
+    arrDest.push(tval)
+}
+
+function checkAnswer(){
+	
+    $("#btnShuffle").removeAttr("disabled" );
+    $("#btnClear").removeAttr("disabled" );
+    
+    if(holderLetters.length <= 0){
+    	$("#btnClear").attr("disabled","disabled");
+    	return;
+    }
+
+	var joined = holderLetters.join(""); 
+    
+    if(poolLetters.length > 0){
+    	checkBadwords(joined);
+	} else {
+    	$("#btnShuffle").attr("disabled","disabled");
+        if(activeItem.ans.toUpperCase() == joined.toUpperCase() ){
+        	showMsg("dvmsg","Tama");
+        } else {
+        	showMsg("dvmsg","Mali", false);
+        }
+    }
+}
+
+function checkBadwords(joinedstr){ 
+	var i = 0;
+    while(i < badwords.length){
+    	if( badwords[i].toUpperCase() == joinedstr.toUpperCase() ){
+			showMsg("dvmsg","Huy Bad yan ! haha", false);
+        }
+		i++;
+	}
+}
+
+function addHistory(){
+	var h = getMaxHistory();
+	if(previousItems.length >= h) previousItems.splice(0,1);
+    previousItems.push(activeItem.ans);
+}
+
+function getRandomItem(){
+	mainItems = shuffle(mainItems);
+	var cnt = 0; 
+	while(cnt < mainItems.length){
+    	itm = mainItems[cnt];
+    	if( previousItems.indexOf(itm.ans ) == -1 ) return itm;
+        cnt++;
+    }
+}
+
+// EVENTS
+function tileClick(boolPool,indx,chr){
+
+	if(boolPool) transferArrItem(poolLetters,indx,holderLetters); 
+    else transferArrItem(holderLetters,indx,poolLetters);  
+    
+    loadTiles("divpool", poolLetters, true);
+    loadTiles("divholder", holderLetters, false);
+    
+    checkAnswer();
+}
+
+function clearClick(){
+	if(holderLetters.length <= 0) return ;
+
+    var i = 0;
+    while(i < holderLetters.length) transferArrItem(holderLetters,i,poolLetters);  
+    
+    loadTiles("divpool", poolLetters, true);
+    loadTiles("divholder", holderLetters, false);
+    
+    checkAnswer();
+}
+
+function shuffleClick(){
+	
+	poolLetters = shuffle( poolLetters );
+	loadTiles("divpool", poolLetters, true);
+}
+
+function clueClick(){
+	
+    var len = activeItem.ans.length;
+	var msg = len >= 5 ? activeItem.ans.substr(0,3) : activeItem.ans.substr(0,2) ;
+    alert("Naguumpisa sa '"+msg+"'");
+}
+
+function changeClick(){
+	
+	renderItem();
+}
+
+function renderItem(){
+	$("#btnShuffle").removeAttr("disabled" );
+    $("#btnClear").attr("disabled","disabled");
+	activeItem = getRandomItem() ;
+	activeItem.ans = activeItem.ans.toUpperCase();
+	poolLetters = shuffle( activeItem.ans.split("") );
+	loadTiles("divpool", poolLetters, true);
+    holderLetters = [];
+    loadTiles("divholder", holderLetters, false);
+    loadQstn("spnquestion",activeItem.qstn);
+    addHistory();
+}
+
+function getMaxHistory(){
+	var h = mainItems.length / 3; 
+    return h;
+}
+
+// DATA
+var mainItems = [
+    {qstn:"bilog at mabuhok, mapula kahit hindi pa kinakamot", ans:"rambutan"} ,
+    {qstn:"itlog na nasa loob ang buhok", ans:"balut"} ,
+    {qstn:"nilalawayan at niyayakap twing gabi", ans:"pillow"} ,
+    {qstn:"pwedeng itaas ang palda dito, at pwede din ibaba ang salawal", ans:"sampayan"} ,
+    {qstn:"matigas, mahaba, at may 'CUM'", ans:"cucumber"} , 
+    {qstn:"lalaking macho, magaling umararo", ans:"magsasaka"} , 
+    {qstn:"tumigas nung pinasok, lumambot nung dinilaan", ans:"icecream"} , 
+    {qstn:"may twalya at talong, madalas amoy bagoong", ans:"pakbet"} , 
+    {qstn:"babaeng pinipilahan, binabayaran, at pagtapos ay iiwan", ans:"kahera"} 
+];
+
+// DRIVE 
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(window.location.search);
+const s = urlParams.get('s');
+
+if(s){
+	try{ 
+		async function getDriveTextFileDirect(fileId) {
+		  const url = `https://drive.google.com/uc?id={fileId}`; // 1FCqieQvea8sn6s8vXUcXHW6liWRRU3bi
+		  
+		  try {
+			const response = await fetch(url);
+			const textData = await response.text(); 
+			
+			mainItems = data.split('\n').map(line => {
+			  const [qstn, ans] = line.split('=');
+			  return { qstn, ans };
+			});
+		  } catch (e) {
+			alert("Data not loaded : " + e.message);
+		  }
+		} 
+	}catch(e){
+		alert("Data not loaded: "+ e.message);
+	}
+}
+
+var badwords = ["titi","tite","puke","pekpek","kiki","kike","betlog","suso","burat","ratbu",
+	"tumbong","etits","penis","vagina","boobs","fuck","chupa","tyupa","tsupa","puta",
+    "tangina","tanga","gago","pokpok"]; 
+
+var activeItem = {}; 
+var previousItems = [];
+var poolLetters = [];
+var holderLetters = [];
+var msgTimer = null;
+
+// ON-LOAD
+renderItem() ;
+
+</script>
+
+
+
