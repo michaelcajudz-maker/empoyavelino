@@ -256,8 +256,8 @@ const s = urlParams.get('s'); console.log(s);
 
 if(s){
 	try{ 
-		async function getDriveTextFileDirect(fileId) {
-		  const url = `https://drive.google.com/uc?export=download&id={fileId}`; // 1FCqieQvea8sn6s8vXUcXHW6liWRRU3bi
+		async function getDriveTextFileDirect(s) {
+		  const url = "https://drive.google.com/uc?id="+s; // 1FCqieQvea8sn6s8vXUcXHW6liWRRU3bi
 		  console.log(url);
 		  
 		  try {
@@ -292,3 +292,6 @@ var msgTimer = null;
 renderItem() ;
 
 </script>
+
+
+
