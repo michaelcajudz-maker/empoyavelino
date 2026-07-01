@@ -3,7 +3,7 @@
 	<link rel="icon" type="image/png" href="/favicon.png">
 	<title>Empoy Avalino</title>
 	<style type="text/css" >
-		.center-container { display: flex; justify-content: center; align-items: center; height: 100vh; }
+		.center-container { display: flex; justify-content: center; align-items: center; height: 100vh; font-family:verdana; font-size:17px; }
 	</style>
 </head>
 	
@@ -14,12 +14,12 @@
 </body>
 	
 <script>
+
+	// LASTEST GS URL HERE
 	var LATEST_PROJ = "https://script.google.com/macros/s/AKfycbx2YnhkKlASxsfQx3Oqn7Yn4o_sg3WfmgM8L43STkcX-sq6b9bFFY7DeHF-nnCt_W_u/exec";
 
 	var s = new URLSearchParams(window.location.search).get('s');
-
 	var u = s ? LATEST_PROJ + "?s=" + s : LATEST_PROJ ; 
-
 	setTimeout(() => { window.location.href = u ; }, 3000); 
 </script>
 	
