@@ -8,22 +8,32 @@
 	<style type="text/css" >
 		.center-container { display: flex; justify-content: center; align-items: center; height: 100vh; font-family:verdana; font-size:23px; }
 	</style>
+	<script>
+	  // Fetch the exact same index.html file, but add a random timestamp to bypass the cache
+	  fetch(window.location.href, { cache: 'no-store' })
+	    .then(response => {
+	      // Get the server's unique validator token for the newest file
+	      const serverETag = response.headers.get('ETag');
+	      const localETag = localStorage.getItem('site-version-etag');
+	
+	      if (serverETag && localETag && serverETag !== localETag) {
+	        // If the server has a new ETag, save it and force a reload from the server
+	        localStorage.setItem('site-version-etag', serverETag);
+	        window.location.reload(true);
+	      } else if (serverETag) {
+	        localStorage.setItem('site-version-etag', serverETag);
+	      }
+	    })
+	    .catch(err => console.log('Cache check skipped:', err));
+	</script>
+	<script src="script.js?v=1"></script> <!-- CHANGE VERSION HERE -->
+
 </head>
 	
 <body>
 	<div class="center-container">
-	  <p>Loading the 'Text-Twist-like' game 🍺 </p>
+	  <p>LOADING 🍺 </p>
 	</div> 
-</body>
-	
-<script>
-
-	// LASTEST GS URL HERE
-	var LATEST_PROJ = "https://script.google.com/macros/s/AKfycbzkSWODlhkZiY6SDT457YCULEiMJo9cAqRg0PpjBa-V-KqpUBpWNdVNtSNp3KxkpZ5A/exec"; 
-
-	var s = new URLSearchParams(window.location.search).get('s');
-	var u = s ? LATEST_PROJ + "?s=" + s : LATEST_PROJ ; 
-	setTimeout(() => { window.location.href = u ; }, 2000); 
-</script>
+</body> 
 	
 </html>
